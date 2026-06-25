@@ -1,8 +1,7 @@
 from app.services import pricing
 
-# NOTE (ISSUE-04): there is intentionally NO coverage of calculate_tax() here,
-# nor of the bulk-discount quantity boundary. Those gaps are the subject of the
-# seeded "missing test coverage" ticket.
+# NOTE (ISSUE-04): there is intentionally NO coverage of calculate_tax() here.
+# That gap is the subject of the seeded "missing test coverage" ticket.
 
 
 def test_no_discount_for_small_quantity():
@@ -15,6 +14,15 @@ def test_bulk_discount_for_large_quantity():
     gross, discount = pricing.price_line(100.0, 15)
     assert gross == 1500.0
     assert discount == 150.0
+
+
+def test_bulk_discount_threshold_boundary():
+    # Just below the threshold: no discount.
+    assert pricing.price_line(100.0, 9)[1] == 0.0
+    # Exactly at the threshold: discount applies (regression for issue #1).
+    assert pricing.price_line(100.0, 10)[1] == 100.0
+    # Above the threshold: discount applies.
+    assert pricing.price_line(100.0, 11)[1] == 110.0
 
 
 def test_price_order_aggregates_lines():
