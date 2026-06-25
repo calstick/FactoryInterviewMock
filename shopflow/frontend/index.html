@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShopFlow · Riverbend Outfitters</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">◣</span>
+        <span class="brand-name">ShopFlow</span>
+        <span class="brand-sub">Riverbend Outfitters</span>
+      </div>
+      <div class="session" id="session">
+        <span id="session-status" class="muted">Not signed in</span>
+        <button id="login-btn" class="btn ghost">Sign in</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="catalog">
+        <h2 class="section-title">Catalog</h2>
+        <div id="products" class="product-grid"></div>
+      </section>
+
+      <aside class="cart-panel">
+        <h2 class="section-title">Cart</h2>
+        <div id="cart-items" class="cart-items">
+          <p class="muted">Your cart is empty.</p>
+        </div>
+        <div class="totals" id="totals"></div>
+        <button id="checkout-btn" class="btn primary" disabled>Place order</button>
+        <p id="message" class="message"></p>
+      </aside>
+    </main>
+
+    <div class="modal hidden" id="login-modal">
+      <div class="modal-card">
+        <h3>Sign in</h3>
+        <label>Email<input id="email" type="email" value="dana@example.com" /></label>
+        <label>Password<input id="password" type="password" value="trailmix1" /></label>
+        <div class="modal-actions">
+          <button id="login-cancel" class="btn ghost">Cancel</button>
+          <button id="login-submit" class="btn primary">Sign in</button>
+        </div>
+        <p id="login-error" class="message error"></p>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

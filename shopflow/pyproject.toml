@@ -1,0 +1,10 @@
+[project]
+name = "shopflow"
+version = "0.1.0"
+description = "Order-management API for Riverbend Outfitters (Factory demo)"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
