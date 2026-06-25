@@ -36,19 +36,42 @@ function renderProducts() {
       <span class="price">$${p.price.toFixed(2)}</span>
       <span class="stock ${outOfStock ? "out" : ""}">${outOfStock ? "Out of stock" : p.stock + " in stock"}</span>
     `;
+    const clamp = (v) => Math.max(1, Math.min(99, Number.isFinite(v) ? v : 1));
+
+    const stepper = document.createElement("div");
+    stepper.className = "stepper";
+    const minus = document.createElement("button");
+    minus.className = "step";
+    minus.textContent = "\u2212";
+    const qtyInput = document.createElement("input");
+    qtyInput.className = "qty-input";
+    qtyInput.type = "number";
+    qtyInput.min = "1";
+    qtyInput.max = "99";
+    qtyInput.value = "1";
+    const plus = document.createElement("button");
+    plus.className = "step";
+    plus.textContent = "+";
+    minus.onclick = () => { qtyInput.value = clamp(parseInt(qtyInput.value, 10) - 1); };
+    plus.onclick = () => { qtyInput.value = clamp(parseInt(qtyInput.value, 10) + 1); };
+    qtyInput.onchange = () => { qtyInput.value = clamp(parseInt(qtyInput.value, 10)); };
+    stepper.append(minus, qtyInput, plus);
+
     const btn = document.createElement("button");
     btn.className = "btn add";
     btn.textContent = "Add to cart";
     btn.disabled = outOfStock;
-    btn.onclick = () => addToCart(p);
+    btn.onclick = () => addToCart(p, clamp(parseInt(qtyInput.value, 10)));
+
+    if (!outOfStock) card.appendChild(stepper);
     card.appendChild(btn);
     grid.appendChild(card);
   }
 }
 
-function addToCart(product) {
+function addToCart(product, quantity = 1) {
   const entry = state.cart[product.id] || { product, quantity: 0 };
-  entry.quantity += 1;
+  entry.quantity += quantity;
   state.cart[product.id] = entry;
   refreshCart();
 }

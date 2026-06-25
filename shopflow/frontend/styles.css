@@ -116,6 +116,22 @@ body {
 .btn.ghost { background: transparent; }
 .btn.add { padding: 6px 10px; font-size: 13px; margin-top: 6px; }
 
+.stepper { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+.stepper .step {
+  width: 28px; height: 28px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--panel-2);
+  color: var(--text); font-size: 16px; line-height: 1; cursor: pointer;
+}
+.stepper .step:hover { border-color: #3a3a3a; }
+.qty-input {
+  width: 48px; text-align: center; padding: 5px 4px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text); font: inherit;
+  -moz-appearance: textfield;
+}
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
 .muted { color: var(--muted); font-size: 13px; }
 .message { font-size: 13px; min-height: 18px; margin: 10px 0 0; }
 .message.error, .error { color: var(--error); }
