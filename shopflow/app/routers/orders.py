@@ -37,11 +37,14 @@ def list_orders(customer_id: int = Depends(get_current_customer_id)):
 
 
 @router.get("/{order_id}", response_model=Order)
-def get_order(order_id: int):
-    # SECURITY BUG (ISSUE-05): no authentication and no ownership check, so any
-    # caller can read any customer's order by guessing the id (IDOR).
+def get_order(
+    order_id: int,
+    customer_id: int = Depends(get_current_customer_id),
+):
+    # Require authentication and enforce ownership. Return 404 when the order is
+    # missing or belongs to another customer to avoid leaking order existence.
     order = database.orders.get(order_id)
-    if order is None:
+    if order is None or order["customer_id"] != customer_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
         )
