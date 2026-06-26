@@ -1,8 +1,4 @@
-"""Shared request validation helpers.
-
-NOTE (tech debt): several routers re-implement quantity validation inline with
-hard-coded literals instead of calling this helper. See ISSUE-06.
-"""
+"""Shared request validation helpers."""
 
 from fastapi import HTTPException, status
 
