@@ -43,3 +43,50 @@ def test_list_orders_scoped_to_customer(client, auth_headers):
     orders = res.json()
     assert len(orders) == 1
     assert orders[0]["customer_id"] == 101
+
+
+def test_get_order_requires_auth(client, auth_headers):
+    created = client.post(
+        "/orders",
+        json={"items": [{"product_id": 1, "quantity": 1}]},
+        headers=auth_headers,
+    )
+    order_id = created.json()["id"]
+
+    res = client.get(f"/orders/{order_id}")
+
+    assert res.status_code == 401
+
+
+def test_get_order_owner_can_fetch(client, auth_headers):
+    created = client.post(
+        "/orders",
+        json={"items": [{"product_id": 1, "quantity": 1}]},
+        headers=auth_headers,
+    )
+    order_id = created.json()["id"]
+
+    res = client.get(f"/orders/{order_id}", headers=auth_headers)
+
+    assert res.status_code == 200
+    order = res.json()
+    assert order["id"] == order_id
+    assert order["customer_id"] == 101
+
+
+def test_get_order_other_customer_forbidden(client, auth_headers):
+    created = client.post(
+        "/orders",
+        json={"items": [{"product_id": 1, "quantity": 1}]},
+        headers=auth_headers,
+    )
+    order_id = created.json()["id"]
+    login = client.post(
+        "/auth/login",
+        json={"email": "miguel@example.com", "password": "summit2024"},
+    )
+    other_headers = {"Authorization": f"Bearer {login.json()['token']}"}
+
+    res = client.get(f"/orders/{order_id}", headers=other_headers)
+
+    assert res.status_code == 404
