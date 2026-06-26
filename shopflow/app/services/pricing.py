@@ -13,9 +13,7 @@ def price_line(unit_price: float, quantity: int):
     """
     gross = unit_price * quantity
     discount = 0.0
-    # BUG (ISSUE-01): uses strict '>' so an order of exactly
-    # BULK_DISCOUNT_THRESHOLD units does NOT receive the bulk discount.
-    if quantity > config.BULK_DISCOUNT_THRESHOLD:
+    if quantity >= config.BULK_DISCOUNT_THRESHOLD:
         discount = gross * config.BULK_DISCOUNT_RATE
     return round(gross, 2), round(discount, 2)
 
