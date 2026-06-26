@@ -3,9 +3,11 @@ const state = {
   customerName: null,
   products: [],
   cart: {}, // product_id -> { product, quantity }
+  lastOrder: null,
 };
 
 const $ = (id) => document.getElementById(id);
+const APPLE_PAY_MOCK_TOKEN = "mock_apple_pay_success";
 
 async function api(path, options = {}) {
   const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
@@ -110,17 +112,47 @@ async function refreshCart() {
 }
 
 async function checkout() {
+  showApplePayButton(false);
   const items = Object.keys(state.cart).map((id) => ({
     product_id: Number(id),
     quantity: state.cart[id].quantity,
   }));
   try {
     const order = await api("/orders", { method: "POST", body: JSON.stringify({ items }) });
+    state.lastOrder = order;
     setMessage(`Order #${order.id} placed · total $${order.total.toFixed(2)}`, "success");
     state.cart = {};
     await loadProducts();
-    refreshCart();
+    await refreshCart();
+    showApplePayButton(true);
   } catch (e) {
+    setMessage(e.message, "error");
+  }
+}
+
+function showApplePayButton(visible) {
+  const btn = $("apple-pay-btn");
+  btn.style.display = visible ? "block" : "none";
+  btn.disabled = false;
+  btn.textContent = "Pay with Apple Pay";
+}
+
+async function payWithApplePay() {
+  if (!state.lastOrder) return;
+  const btn = $("apple-pay-btn");
+  btn.disabled = true;
+  btn.textContent = "Processing Apple Pay...";
+  try {
+    const order = await api(`/orders/${state.lastOrder.id}/pay`, {
+      method: "POST",
+      body: JSON.stringify({ token: APPLE_PAY_MOCK_TOKEN }),
+    });
+    state.lastOrder = order;
+    showApplePayButton(false);
+    setMessage("Paid with Apple Pay", "success");
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = "Pay with Apple Pay";
     setMessage(e.message, "error");
   }
 }
@@ -154,5 +186,6 @@ $("login-btn").onclick = () => $("login-modal").classList.remove("hidden");
 $("login-cancel").onclick = () => $("login-modal").classList.add("hidden");
 $("login-submit").onclick = login;
 $("checkout-btn").onclick = checkout;
+$("apple-pay-btn").onclick = payWithApplePay;
 
 loadProducts();

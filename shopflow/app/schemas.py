@@ -52,10 +52,16 @@ class Order(BaseModel):
     total: float
     status: OrderStatus
     created_at: datetime
+    payment_status: str = "unpaid"
+    payment_method: Optional[str] = None
 
 
 class PlaceOrderRequest(BaseModel):
     items: List[CartItem]
+
+
+class ApplePayRequest(BaseModel):
+    token: str
 
 
 class LoginRequest(BaseModel):

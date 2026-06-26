@@ -42,6 +42,8 @@ def create_order(customer_id: int, items: List[CartItem]) -> dict:
         "total": priced["total"],
         "status": OrderStatus.pending.value,
         "created_at": datetime.now(timezone.utc),
+        "payment_status": "unpaid",
+        "payment_method": None,
     }
     database.orders[order_id] = order
     return order
