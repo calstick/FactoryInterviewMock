@@ -1,10 +1,11 @@
-from typing import List
+from datetime import date
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app import database
 from app.auth import get_current_customer_id
-from app.schemas import Order, PlaceOrderRequest
+from app.schemas import Order, OrderStatus, PlaceOrderRequest
 from app.services import orders as order_service
 
 router = APIRouter(prefix="/orders", tags=["orders"])
@@ -31,9 +32,22 @@ def place_order(
 
 
 @router.get("", response_model=List[Order])
-def list_orders(customer_id: int = Depends(get_current_customer_id)):
-    # FEATURE GAP (ISSUE-03): no filtering by status or date range yet.
-    return [o for o in database.list_orders() if o["customer_id"] == customer_id]
+def list_orders(
+    customer_id: int = Depends(get_current_customer_id),
+    status: Optional[OrderStatus] = None,
+    start_date: Optional[date] = None,
+    end_date: Optional[date] = None,
+):
+    orders = [o for o in database.list_orders() if o["customer_id"] == customer_id]
+
+    if status is not None:
+        orders = [o for o in orders if o["status"] == status.value]
+    if start_date is not None:
+        orders = [o for o in orders if o["created_at"].date() >= start_date]
+    if end_date is not None:
+        orders = [o for o in orders if o["created_at"].date() <= end_date]
+
+    return orders
 
 
 @router.get("/{order_id}", response_model=Order)
