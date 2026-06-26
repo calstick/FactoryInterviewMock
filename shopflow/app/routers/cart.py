@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, status
 from app import database
 from app.schemas import PlaceOrderRequest
 from app.services import pricing
+from app.utils.validation import validate_quantity
 
 router = APIRouter(prefix="/cart", tags=["cart"])
 
@@ -12,12 +13,7 @@ def preview(req: PlaceOrderRequest):
     """Return a price breakdown for a proposed cart without persisting it."""
     line_inputs = []
     for item in req.items:
-        # Inline validation duplicated from utils.validation (see ISSUE-06).
-        if item.quantity < 1 or item.quantity > 99:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Invalid quantity",
-            )
+        validate_quantity(item.quantity)
         product = database.get_product(item.product_id)
         if product is None:
             raise HTTPException(

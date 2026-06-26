@@ -6,6 +6,7 @@ from app import database
 from app.auth import get_current_customer_id
 from app.schemas import Order, PlaceOrderRequest
 from app.services import orders as order_service
+from app.utils.validation import validate_quantity
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -21,12 +22,7 @@ def place_order(
             detail="Order must contain at least one item",
         )
     for item in req.items:
-        # Inline validation duplicated from utils.validation (see ISSUE-06).
-        if item.quantity < 1 or item.quantity > 99:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Invalid quantity",
-            )
+        validate_quantity(item.quantity)
     return order_service.create_order(customer_id, req.items)
 
 
