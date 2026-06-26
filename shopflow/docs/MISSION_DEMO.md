@@ -8,7 +8,8 @@ dispatches a fleet of Droids in parallel — one PR per ticket.
 - **Core demo (depth):** one Droid fixes ONE issue end-to-end — recommended
   **#5 (IDOR security)** → PR + green CI. Full human-in-the-loop control.
 - **Mission segment (scale):** a Mission targets the REMAINING issues
-  (**#1, #2, #3, #4, #6**) and remediates them concurrently.
+  (**#1, #2, #3, #4, #6, #10**) and remediates them concurrently. #10 is the
+  net-new **Apple Pay checkout** feature — the revenue/competitor-parity story.
 - Because the Mission targets *different* issues than the one fixed live, there
   is **no overlap and nothing to reset** between the two parts.
 - Everything runs on a branch off `demo-baseline` and is **never merged**, so
@@ -38,8 +39,9 @@ Mission: Burn down the ShopFlow backlog.
 
 Goal: Autonomously remediate the open GitHub issues in the
 calstick/FactoryInterviewMock repository (the shopflow/ project) — issues
-#1, #2, #3, #4, and #6 — dispatching a worker per issue in parallel.
+#1, #2, #3, #4, #6, and #10 — dispatching a worker per issue in parallel.
 Exclude #5; it is being demoed separately as a single-ticket fix.
+(#10 is the net-new "Add Apple Pay checkout (simulated)" feature.)
 
 For each issue:
 1. Read the issue and its acceptance criteria.
@@ -54,12 +56,12 @@ Constraints:
   to the issue being solved.
 - Keep the full test suite green.
 
-Done when: a PR exists for each of #1, #2, #3, #4, #6, each with passing CI.
+Done when: a PR exists for each of #1, #2, #3, #4, #6, #10, each with passing CI.
 ```
 
 ## Success criteria
-- 5 PRs opened (issues #1, #2, #3, #4, #6), each green in CI, each "Closes" its
-  issue.
+- 6 PRs opened (issues #1, #2, #3, #4, #6, #10), each green in CI, each "Closes"
+  its issue.
 
 ## Talk-track (~60-90 sec)
 > "You've just seen one Droid take a single ticket end-to-end — read the issue,
@@ -68,13 +70,17 @@ Done when: a PR exists for each of #1, #2, #3, #4, #6, each with passing CI.
 >
 > Now here's scale. With Missions, instead of one ticket we point Factory at the
 > whole backlog. It plans the work, then dispatches a fleet of Droids in
-> parallel — one per ticket. Here it's working five at once: two bugs, a new
-> feature, a missing-test gap, and a tech-debt refactor.
+> parallel — one per ticket. Here it's working six at once: two bugs, a missing-
+> test gap, a tech-debt refactor, order filtering — and the one you flagged on
+> our last call: Apple Pay checkout. Your competitors already have it, and it's
+> been sitting in the backlog costing you conversions.
 >
-> Minutes later: five reviewable PRs, each with passing CI, each closing its
-> issue. Your engineers review a batch in one sitting instead of grinding
-> through them across a sprint — same human-in-the-loop guarantees, just
-> parallelized across the backlog."
+> Minutes later: six reviewable PRs, each with passing CI, each closing its
+> issue — including a working Apple Pay flow. Your engineers review a batch in
+> one sitting instead of grinding through them across a sprint, and a
+> revenue-driving feature that was stuck in the backlog is suddenly ready to
+> ship — same human-in-the-loop guarantees, just parallelized across the
+> backlog."
 
 ## Reset after the demo (off-camera)
 ```powershell
