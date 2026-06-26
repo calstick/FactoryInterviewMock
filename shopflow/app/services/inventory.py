@@ -6,11 +6,10 @@ from app import database
 def is_in_stock(product: dict, quantity: int) -> bool:
     """Return whether ``quantity`` units of ``product`` can be fulfilled.
 
-    BUG (ISSUE-02): this only checks that *some* stock exists and ignores the
-    requested quantity, which allows customers to oversell beyond what is
-    actually available.
+    A product is in stock only when enough units are available for the requested
+    quantity.
     """
-    return product["stock"] > 0
+    return product["stock"] >= quantity
 
 
 def reduce_stock(product_id: int, quantity: int) -> None:
