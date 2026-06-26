@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app import database
 from app.auth import get_current_customer_id
-from app.schemas import Order, PlaceOrderRequest
+from app.schemas import ApplePayRequest, Order, PlaceOrderRequest
 from app.services import orders as order_service
+from app.services import payments
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -34,6 +35,30 @@ def place_order(
 def list_orders(customer_id: int = Depends(get_current_customer_id)):
     # FEATURE GAP (ISSUE-03): no filtering by status or date range yet.
     return [o for o in database.list_orders() if o["customer_id"] == customer_id]
+
+
+@router.post("/{order_id}/pay", response_model=Order)
+def pay_order(
+    order_id: int,
+    req: ApplePayRequest,
+    customer_id: int = Depends(get_current_customer_id),
+):
+    order = database.orders.get(order_id)
+    if order is None or order["customer_id"] != customer_id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
+        )
+
+    authorization = payments.process_apple_pay(order["total"], req.token)
+    if not authorization["approved"]:
+        raise HTTPException(
+            status_code=status.HTTP_402_PAYMENT_REQUIRED,
+            detail="Apple Pay authorization declined",
+        )
+
+    order["payment_status"] = "paid"
+    order["payment_method"] = "apple_pay"
+    return order
 
 
 @router.get("/{order_id}", response_model=Order)

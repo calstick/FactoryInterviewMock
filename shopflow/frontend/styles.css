@@ -115,6 +115,7 @@ body {
 .btn.primary:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn.ghost { background: transparent; }
 .btn.add { padding: 6px 10px; font-size: 13px; margin-top: 6px; }
+.btn.payment-action { margin-top: 10px; }
 
 .stepper { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
 .stepper .step {
